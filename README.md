@@ -28,7 +28,7 @@ App web (PWA) senza server e senza account: liste, carte fedeltà e impostazioni
 3. Dopo circa un minuto l'app è su `https://<utente>.github.io/Solo-du-Cosette/`.
 
 ## Aggiornare l'app
-Dopo ogni modifica a `index.html`, cambiare il numero di `VERSIONE` in `sw.js` (per esempio da `v3` a `v4`). Così il telefono scarica la versione nuova.
+Dopo ogni modifica a `index.html`, cambiare il numero di `VERSIONE` in `sw.js` (per esempio da `v4` a `v5`). Così il telefono scarica la versione nuova.
 
 ## File
 - `index.html`: tutta l'app (pagina, stile e codice)
