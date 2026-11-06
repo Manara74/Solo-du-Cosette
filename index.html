@@ -211,6 +211,13 @@ h3.cat{margin:20px 2px 10px;font-size:13px;font-weight:800;color:var(--muted);te
 
 #toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 100px);transform:translateX(-50%) translateY(10px);background:var(--ink);color:var(--bg2);padding:11px 18px;border-radius:22px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:50;max-width:88vw;text-align:center}
 #toast.on{opacity:1;transform:translateX(-50%)}
+.guide details{border-top:1px solid var(--line);padding:4px 0}
+.guide summary{list-style:none;cursor:pointer;font-weight:600;padding:12px 0;display:flex;justify-content:space-between;align-items:center}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary::after{content:"＋";color:var(--accent);font-weight:700}
+.guide details[open] summary::after{content:"−"}
+.guide p{margin:0 0 12px;color:var(--muted);line-height:1.45}
+.guide p b{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -523,6 +530,9 @@ function renderMoreMain() {
         <div class="seg">${[['tiles','Riquadri'],['rows','Elenco']].map(([v, t]) => `<button data-act="view" data-v="${v}" class="${S.set.view === v ? 'on' : ''}">${t}</button>`).join('')}</div></div>
     </div>
     <div class="group">
+      <div class="ln"><div>Guida<small>Come si usa, in breve</small></div><button class="btn" data-act="guide">Apri</button></div>
+    </div>
+    <div class="group">
       <div class="ln"><div>Copia di sicurezza<small>Salva liste e carte in un file</small></div><button class="btn" data-act="export">Salva</button></div>
       <div class="ln"><div>Ripristina<small>Carica un file salvato prima</small></div><button class="btn" data-act="import">Scegli file</button></div>
       <input type="file" id="importfile" accept="application/json,.json" hidden>
@@ -530,7 +540,7 @@ function renderMoreMain() {
     <div class="group">
       <div class="ln"><div>Cancella tutto<small>Elimina liste e carte da questo telefono</small></div><button class="btn danger" data-act="wipe">Cancella</button></div>
     </div>
-    <p style="text-align:center;color:var(--muted);font-size:13px">Solo du Cosette · versione 1.5<br>I dati restano solo su questo telefono.</p>`;
+    <p style="text-align:center;color:var(--muted);font-size:13px">Solo du Cosette · versione 1.6<br>I dati restano solo su questo telefono.</p>`;
 }
 
 function render() {
@@ -539,7 +549,7 @@ function render() {
   const showSearch = v === 'list' || v === 'catalog';
   $('#searchbar').hidden = !showSearch;
   if (showSearch) q.placeholder = v === 'list' ? 'Mi serve…' : 'Cerca un prodotto…';
-  back.hidden = v !== 'list' || S.lists.length < 2;
+  back.hidden = v !== 'list';
   document.querySelectorAll('#tabs [data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === (v === 'lists' ? 'list' : v)));
   if (v === 'list') {
     title.innerHTML = `<span class="sub">${esc(greeting())}</span>${esc(curList().name)}`;
@@ -619,6 +629,24 @@ function openDetail(id) {
       save(); closeSheet(); refresh();
     };
   });
+}
+
+/* ====== guida ====== */
+function openGuide() {
+  const G = [
+    ['Aggiungere un prodotto', `Nella schermata <b>Liste</b> scrivi nella barra “Mi serve…”: appaiono i suggerimenti, tocca quello giusto. Se il prodotto non c’è, tocca <b>Aggiungi “…”</b> e lo crei tu: l’app si ricorda il reparto che gli dai.<br><br>Oppure tocca <b>Prodotti</b> in basso: trovi tutti i prodotti divisi per reparto. Tocca un prodotto per aggiungerlo; se lo tocchi ancora, la quantità aumenta (×2, ×3…).`],
+    ['Fare la spesa', `Quando metti un prodotto nel carrello, <b>toccalo nella lista</b>: diventa grigio con una spunta e scende tra i <b>Presi</b>. Se lo tocchi di nuovo, torna in lista. Il cerchio in alto mostra quanti ne hai già presi. Con <b>Svuota presi</b> tolgi quelli finiti.`],
+    ['Quantità, note e reparto', `Tocca la piccola <b>ⓘ</b> su un prodotto: puoi scegliere la quantità, l’unità (kg, g, l, conf.), scrivere una nota (per esempio “quella senza glutine”), cambiare il reparto o eliminare il prodotto. Ricorda di toccare <b>Salva</b>.`],
+    ['Usati di recente', `In fondo alla lista trovi i prodotti che hai usato di recente e che non sono già in lista. Toccane uno per rimetterlo subito.`],
+    ['Più liste', `La freccia in alto a sinistra, nella lista, mostra tutte le tue liste. Con <b>Nuova lista</b> ne crei un’altra, per esempio per una festa o per il mercato. Dal menu <b>⋯</b> in alto puoi rinominarla, svuotarla o eliminarla.`],
+    ['Condividere la lista', `Dal menu <b>⋯</b> scegli <b>Condividi la lista</b>: si apre il menu di iPhone e puoi mandarla per messaggio o WhatsApp come elenco di testo. Quello che spedisci è solo il testo: chi lo riceve non ha l’app collegata alla tua.`],
+    ['Carte fedeltà', `In <b>Carte</b> aggiungi le tue carte: scrivi il nome e il numero sotto il codice a barre. Alla cassa toccala: compare il codice a barre grande; alza la luminosità dello schermo e avvicinalo al lettore. Se il codice non viene letto, prova un altro tipo (Code 128, EAN-13, EAN-8) modificando la carta.`],
+    ['Aspetto', `In <b>Altro</b> puoi scrivere il tuo nome (per il saluto in alto), scegliere <b>Chiaro</b>, <b>Notte</b> o <b>Auto</b> (come il telefono) e cambiare la vista dei prodotti tra riquadri ed elenco. Il tasto ☰ in alto nella lista cambia la vista al volo.`],
+    ['Copia di sicurezza', `Tutto resta <b>solo su questo telefono</b>. Se cancelli l’app o svuoti i dati di Safari, liste e carte spariscono. Per non perdere nulla, ogni tanto vai in <b>Altro → Copia di sicurezza → Salva</b> e tieni il file (per esempio in iCloud Drive). Per ritrovare tutto usa <b>Ripristina</b> e scegli quel file.`],
+    ['Senza internet', `Dopo la prima apertura con internet, l’app funziona anche senza rete, per esempio dentro il supermercato. Quando c’è una nuova versione si aggiorna da sola alla riapertura successiva.`]
+  ];
+  sheet(`<h2>Guida</h2><div class="guide">${G.map((g, i) => `<details${i === 0 ? ' open' : ''}><summary>${g[0]}</summary><p>${g[1]}</p></details>`).join('')}</div>
+    <div class="btns"><button class="btn primary" data-close>Chiudi</button></div>`, () => {});
 }
 
 function listMenu() {
@@ -810,6 +838,7 @@ document.addEventListener('click', e => {
     case 'close-card': $('#cardview').hidden = true; break;
     case 'theme': S.set.theme = el.dataset.v; save(); applyTheme(); renderMain(); break;
     case 'view': S.set.view = el.dataset.v; save(); renderMain(); break;
+    case 'guide': openGuide(); break;
     case 'export': exportBackup(); break;
     case 'import': $('#importfile').click(); break;
     case 'wipe': askConfirm('Cancellare tutte le liste e le carte da questo telefono?', 'Cancella tutto', () => { S = fresh(); save(); applyTheme(); ui.view = 'list'; render(); toast('Tutto cancellato'); }, true); break;

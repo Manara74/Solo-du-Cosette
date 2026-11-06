@@ -15,6 +15,7 @@ App web (PWA) senza server e senza account: liste, carte fedeltà e impostazioni
 - Carte fedeltà con codice a barre (Code 128, EAN-13, EAN-8)
 - Chiaro, scuro o automatico
 - Copia di sicurezza in un file e ripristino
+- Guida integrata (in Altro)
 - Funziona anche senza rete
 
 ## Installare sull'iPhone
@@ -28,7 +29,7 @@ App web (PWA) senza server e senza account: liste, carte fedeltà e impostazioni
 3. Dopo circa un minuto l'app è su `https://<utente>.github.io/Solo-du-Cosette/`.
 
 ## Aggiornare l'app
-Dopo ogni modifica a `index.html`, cambiare il numero di `VERSIONE` in `sw.js` (per esempio da `v6` a `v7`). Così il telefono scarica la versione nuova.
+Dopo ogni modifica a `index.html`, cambiare il numero di `VERSIONE` in `sw.js` (per esempio da `v7` a `v8`). Così il telefono scarica la versione nuova.
 
 ## File
 - `index.html`: tutta l'app (pagina, stile e codice)
